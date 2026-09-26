@@ -169,7 +169,7 @@ const CONFIG = {
     // Global text pacing: every hold/gap in the story is multiplied
     // by this. 1 = original speed. Raise = slower & more spacious,
     // lower = brisker. Text fade-in length lives in style.css.
-    pacing: 3.0,
+    pacing: 2.5,
     lineReveal: 1100,
     lineHold: 1900,
     stanzaPause: 1200,
