@@ -1589,6 +1589,7 @@ const PROPOSAL = {
 
     sec.classList.remove('hidden');
     DOM['layer-heart'].classList.add('lifted');
+    q.classList.remove('gone');
     q.textContent = CONFIG.proposalText;
 
     await ANIMATION.sleep(700);
@@ -1658,7 +1659,10 @@ const PROPOSAL = {
     if (PROPOSAL.answered) return;
     PROPOSAL.answered = true;
     const btns = DOM['proposal-buttons'];
+    const q = DOM['proposal-question'];
     btns.classList.remove('visible');
+    q.classList.remove('visible');
+    q.classList.add('gone');
     await ANIMATION.sleep(650);
     btns.classList.add('hidden');
     DOM['think-panel'].classList.add('hidden');
@@ -1669,6 +1673,11 @@ const PROPOSAL = {
     hl.classList.add('expanded');
     await ANIMATION.sleep(900);
     PROPOSAL.particles(4200);
+
+    // The question has finished fading — step the whole section away
+    // so the celebration lines never overlap it.
+    await ANIMATION.sleep(500);
+    DOM['proposal'].classList.add('hidden');
 
     // Celebration lines
     await POETRY.sayLines(CONFIG.yesLines, { gap: 1100, hold: 1900, clear: true });
