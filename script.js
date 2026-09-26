@@ -295,8 +295,22 @@ const ANIMATION = {
   // Global time multiplier — 1 = real time. (Tests may lower it.)
   timeScale: 1,
 
+  // Sleep — returns early (within ~90 ms) if Skip has been pressed,
+  // so a skip never waits out a long poetic hold.
   sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms * ANIMATION.timeScale));
+    if (SCENES.skipRequested) return Promise.resolve();
+    const dur = Math.max(0, ms * ANIMATION.timeScale);
+    return new Promise(resolve => {
+      const start = performance.now();
+      const tick = () => {
+        if (SCENES.skipRequested || performance.now() - start >= dur) {
+          resolve();
+          return;
+        }
+        setTimeout(tick, 90);
+      };
+      setTimeout(tick, Math.min(dur, 90));
+    });
   },
 
   // Reveal a single line in a container (opacity + translateY + blur)
@@ -319,10 +333,11 @@ const ANIMATION = {
     return new Promise(resolve => {
       if (!line) { resolve(); return; }
       line.classList.add('gone');
+      const delay = SCENES.skipRequested ? 150 : 1000;
       setTimeout(() => {
         if (line.parentNode) line.parentNode.removeChild(line);
         resolve();
-      }, 1000);
+      }, delay);
     });
   },
 
@@ -361,14 +376,14 @@ const ANIMATION = {
   },
 
   // Run an element through a callback on each animation frame.
-  // Returns a promise that resolves false if cancelled.
+  // Resolves false if cancelled or interrupted by the Skip button.
   tween(duration, onFrame) {
     let cancelled = false;
     const start = performance.now();
     const dur = duration * ANIMATION.timeScale;
     return new Promise(resolve => {
       function step(now) {
-        if (cancelled) { resolve(false); return; }
+        if (cancelled || SCENES.skipRequested) { resolve(false); return; }
         const t = MATH.clamp((now - start) / dur, 0, 1);
         onFrame(t);
         if (t < 1) requestAnimationFrame(step);
@@ -1465,11 +1480,12 @@ const MOON = {
     const t0 = -0.35 * Math.PI;
     const sweep = 1.55 * Math.PI;
     let last = MOON.orbitPoint(t0);
-    await ANIMATION.tween(4600, t => {
+    const ok = await ANIMATION.tween(4600, t => {
       const e = MATH.easeInOutSine(t);
       last = MOON.orbitPoint(t0 + sweep * e);
       MOON.placeAt(last);
     });
+    if (!ok) return; // skipped — PROPOSAL.prepareStage() will settle it
     const from = last, to = MOON.finalPos;
     await ANIMATION.tween(1600, t => {
       const e = MATH.easeInOutCubic(t);
@@ -1493,6 +1509,7 @@ const MOON = {
    ============================================================ */
 const PROPOSAL = {
   wired: false,
+  answered: false, // one-tap guard: YES / THINK can't double-fire
 
   // Full stage setup so the proposal looks right whether it is
   // reached naturally or jumped to with the Skip button.
@@ -1599,6 +1616,8 @@ const PROPOSAL = {
   },
 
   async handleYes() {
+    if (PROPOSAL.answered) return;
+    PROPOSAL.answered = true;
     const btns = DOM['proposal-buttons'];
     btns.classList.remove('visible');
     await ANIMATION.sleep(650);
@@ -1644,6 +1663,8 @@ const PROPOSAL = {
   },
 
   handleThink() {
+    if (PROPOSAL.answered) return;
+    PROPOSAL.answered = true;
     const btns = DOM['proposal-buttons'];
     const panel = DOM['think-panel'];
     btns.classList.remove('visible');
@@ -1670,6 +1691,7 @@ const PROPOSAL = {
     DOM['btn-back'].classList.add('hidden');
     setTimeout(() => {
       panel.classList.add('hidden');
+      PROPOSAL.answered = false;
       btns.classList.remove('hidden');
       requestAnimationFrame(() => requestAnimationFrame(() => btns.classList.add('visible')));
     }, 700);
