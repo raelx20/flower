@@ -1,404 +1,604 @@
-/* ========================================
-   Mathematical Flower — Styles
-   ======================================== */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ============================================================
+   The Mathematical Love Letter — style.css
+   Dark · elegant · mathematical · pink · cinematic
+   ============================================================ */
 
 :root {
-  --bg-dark: #0d0a14;
-  --bg-card: rgba(20, 15, 30, 0.85);
-  --text-primary: #f0e6f0;
-  --text-secondary: #b8a8c8;
-  --text-dim: #7a6a8a;
-  --accent-pink: #e8739e;
-  --accent-soft: #f4a0b8;
-  --border-subtle: rgba(200, 160, 200, 0.12);
-  --glow-pink: rgba(232, 115, 158, 0.3);
+  --bg: #08050A;
+  --bg-soft: #120A14;
+  --deep-pink: #8F2858;
+  --rose: #D63384;
+  --bright-pink: #E83E8C;
+  --light-pink: #FF8FC4;
+  --soft-pink: #FFD1E5;
+  --text: #FFF7FB;
+  --text-dim: rgba(255, 247, 251, 0.62);
+  --grid-line: rgba(143, 40, 88, 0.30);
+  --axis-line: rgba(214, 51, 132, 0.55);
+  --font: "Georgia", "Times New Roman", serif;
+  --font-ui: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
-  font-family: 'Georgia', 'Times New Roman', serif;
-  background: var(--bg-dark);
-  color: var(--text-primary);
-  overflow-x: hidden;
-  min-height: 100vh;
+  background:
+    radial-gradient(ellipse 120% 90% at 50% 40%, rgba(143, 40, 88, 0.14), transparent 65%),
+    radial-gradient(ellipse 80% 60% at 50% 110%, rgba(214, 51, 132, 0.10), transparent 70%),
+    var(--bg);
+  transition: background-color 2.4s ease;
 }
 
-/* ---- Intro Overlay ---- */
-.intro {
+body.lighter {
+  background:
+    radial-gradient(ellipse 120% 90% at 50% 40%, rgba(143, 40, 88, 0.26), transparent 65%),
+    radial-gradient(ellipse 80% 60% at 50% 110%, rgba(214, 51, 132, 0.18), transparent 70%),
+    #14091A;
+}
+
+.hidden { display: none !important; }
+
+/* ============================================================
+   SVG STAGE
+   ============================================================ */
+
+.stage {
   position: fixed;
   inset: 0;
-  background: var(--bg-dark);
+  display: block;
+  z-index: 1;
+}
+
+#scene-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Grid & axes */
+.grid-line {
+  stroke: var(--grid-line);
+  stroke-width: 0.25;
+  fill: none;
+}
+.axis-line {
+  stroke: var(--axis-line);
+  stroke-width: 0.4;
+  fill: none;
+}
+.axis-letter {
+  fill: var(--light-pink);
+  font-family: var(--font);
+  font-style: italic;
+  font-size: 5px;
+  opacity: 0.85;
+}
+.axis-label {
+  fill: rgba(255, 143, 196, 0.55);
+  font-family: var(--font);
+  font-size: 3.4px;
+}
+#layer-grid { opacity: 0; transition: opacity 1.6s ease; }
+#layer-grid.visible { opacity: 1; }
+#layer-grid.faded { opacity: 0 !important; transition: opacity 2s ease; }
+
+/* ============================================================
+   OVERLAY & TEXT
+   ============================================================ */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
-  transition: opacity 1.2s ease;
 }
 
-.intro.fade-out {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.intro-content {
+.text-layer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(88vw, 640px);
   text-align: center;
-}
-
-.intro-equation {
-  font-family: 'Courier New', monospace;
-  font-size: clamp(14px, 3vw, 22px);
-  color: var(--accent-soft);
-  opacity: 0;
-  transition: opacity 0.8s ease;
-  letter-spacing: 1px;
-  line-height: 1.8;
-}
-
-.intro-equation.visible {
-  opacity: 1;
-}
-
-.intro-subtitle {
-  font-size: clamp(12px, 2vw, 16px);
-  color: var(--text-dim);
-  margin-top: 16px;
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
-
-.intro-subtitle.visible {
-  opacity: 1;
-}
-
-/* ---- Main Content ---- */
-.main-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh;
-  padding: 20px;
-  transition: opacity 0.8s ease;
+  gap: 0.55em;
 }
 
-.main-content.hidden {
+.scene-line {
+  font-size: clamp(1.05rem, 4.4vw, 1.6rem);
+  line-height: 1.55;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  white-space: pre-line;
   opacity: 0;
+  transform: translateY(14px);
+  filter: blur(6px);
+  transition:
+    opacity 1.1s ease,
+    transform 1.1s ease,
+    filter 1.1s ease;
+}
+.scene-line.visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+.scene-line.dim { color: var(--text-dim); font-size: clamp(0.95rem, 3.8vw, 1.3rem); }
+.scene-line.spacer { min-height: 0.7em; }
+.scene-line.gone {
+  opacity: 0 !important;
+  transform: translateY(-10px);
+  filter: blur(5px);
+  transition: opacity 0.9s ease, transform 0.9s ease, filter 0.9s ease;
+}
+.scene-line.larger {
+  font-size: clamp(1.3rem, 6vw, 2.2rem);
+  color: var(--soft-pink);
+}
+
+/* First-point scene: text sits low so it never covers the point */
+.text-layer.lower { top: 74%; }
+.text-layer.lower .scene-line {
+  font-size: clamp(0.98rem, 4vw, 1.4rem);
+  color: var(--soft-pink);
+}
+
+/* ============================================================
+   EQUATIONS & PARAMETER READOUT
+   ============================================================ */
+
+.equation-layer {
+  position: absolute;
+  left: 50%;
+  top: 14%;
+  transform: translateX(-50%);
+  width: min(92vw, 720px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35em;
   pointer-events: none;
 }
 
-/* ---- Flower Stage ---- */
-.flower-stage {
-  width: min(90vw, 90vh, 600px);
-  height: min(90vw, 90vh, 600px);
+.eq-line {
+  font-family: var(--font-ui);
+  font-size: clamp(0.72rem, 3.1vw, 1rem);
+  color: var(--light-pink);
+  letter-spacing: 0.06em;
+  white-space: pre-wrap;
+  opacity: 0;
+  transform: translateY(8px);
+  filter: blur(4px);
+  transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease;
+}
+.eq-line.visible { opacity: 0.92; transform: translateY(0); filter: blur(0); }
+.eq-line.gone {
+  opacity: 0 !important;
+  transition: opacity 1s ease;
+}
+.eq-caption {
+  font-family: var(--font);
+  font-size: clamp(0.85rem, 3.6vw, 1.15rem);
+  font-style: italic;
+  color: var(--soft-pink);
+}
+
+.param-display {
+  position: absolute;
+  left: 50%;
+  bottom: 16%;
+  transform: translateX(-50%);
+  font-family: var(--font-ui);
+  font-size: clamp(0.7rem, 3vw, 0.95rem);
+  color: var(--light-pink);
+  letter-spacing: 0.08em;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.param-display.visible { opacity: 0.9; }
+
+/* ============================================================
+   POEM STANZAS
+   ============================================================ */
+
+.poem-layer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(88vw, 620px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5em;
+  pointer-events: none;
+}
+
+.poem-line {
+  font-size: clamp(1.05rem, 4.6vw, 1.7rem);
+  line-height: 1.6;
+  font-style: italic;
+  color: var(--soft-pink);
+  opacity: 0;
+  transform: translateY(16px);
+  filter: blur(7px);
+  transition: opacity 1.3s ease, transform 1.3s ease, filter 1.3s ease;
+}
+.poem-line.visible { opacity: 1; transform: translateY(0); filter: blur(0); }
+.poem-line.gone {
+  opacity: 0 !important;
+  transform: translateY(-12px);
+  filter: blur(6px);
+  transition: opacity 1s ease, transform 1s ease, filter 1s ease;
+}
+.poem-line.spacer { min-height: 0.6em; }
+
+.poem-emphasis {
+  font-size: clamp(1.3rem, 6vw, 2.1rem);
+  color: var(--light-pink);
+  font-style: normal;
+  letter-spacing: 0.03em;
+}
+
+/* ============================================================
+   PROPOSAL
+   ============================================================ */
+
+.proposal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.4rem, 5vh, 3rem);
+  text-align: center;
+  padding: 0 6vw;
+  pointer-events: auto;
+}
+
+.proposal-question {
+  font-size: clamp(2.4rem, 12vw, 5.6rem);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  text-shadow:
+    0 0 24px rgba(232, 62, 140, 0.55),
+    0 0 70px rgba(143, 40, 88, 0.45);
+  opacity: 0;
+  transform: translateY(24px) scale(0.97);
+  filter: blur(10px);
+  transition: opacity 1.6s ease, transform 1.6s ease, filter 1.6s ease;
+}
+.proposal-question.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+.proposal-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 1.1s ease, transform 1.1s ease;
+}
+.proposal-buttons.visible { opacity: 1; transform: translateY(0); }
+
+.btn {
+  font-family: var(--font-ui);
+  font-size: clamp(0.95rem, 4vw, 1.15rem);
+  letter-spacing: 0.14em;
+  padding: 1rem 2.4rem;
+  min-height: 52px;
+  min-width: 220px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 143, 196, 0.5);
+  background: rgba(143, 40, 88, 0.22);
+  color: var(--soft-pink);
+  transition: all 0.35s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:hover, .btn:focus-visible {
+  background: rgba(214, 51, 132, 0.35);
+  border-color: var(--light-pink);
+  color: var(--text);
+  box-shadow: 0 0 26px rgba(232, 62, 140, 0.4);
+  outline: none;
+}
+.btn:active { transform: scale(0.97); }
+
+.btn-yes {
+  background: linear-gradient(135deg, rgba(214, 51, 132, 0.55), rgba(143, 40, 88, 0.55));
+  border-color: var(--light-pink);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: 0 0 30px rgba(232, 62, 140, 0.35);
+}
+.btn-yes:hover, .btn-yes:focus-visible {
+  box-shadow: 0 0 44px rgba(232, 62, 140, 0.6);
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: rgba(255, 143, 196, 0.35);
+  font-size: clamp(0.8rem, 3.4vw, 0.95rem);
+  min-width: 170px;
+  padding: 0.8rem 1.8rem;
+  min-height: 46px;
+}
+
+.think-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+}
+.think-line {
+  font-size: clamp(1.05rem, 4.6vw, 1.55rem);
+  font-style: italic;
+  color: var(--soft-pink);
+  opacity: 0;
+  transform: translateY(12px);
+  filter: blur(6px);
+  transition: opacity 1.1s ease, transform 1.1s ease, filter 1.1s ease;
+}
+.think-line.visible { opacity: 1; transform: translateY(0); filter: blur(0); }
+
+/* ============================================================
+   FINAL SCREEN
+   ============================================================ */
+
+.final-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.2rem, 4vh, 2.4rem);
+  text-align: center;
+  padding: 0 7vw;
+  pointer-events: auto;
+}
+
+.final-block {
+  font-size: clamp(1rem, 4.3vw, 1.45rem);
+  line-height: 1.75;
+  white-space: pre-line;
+  color: var(--text);
+  opacity: 0;
+  transform: translateY(16px);
+  filter: blur(7px);
+  transition: opacity 1.4s ease, transform 1.4s ease, filter 1.4s ease;
+}
+.final-block.visible { opacity: 1; transform: translateY(0); filter: blur(0); }
+
+.final-signature {
+  font-family: var(--font-ui);
+  font-size: clamp(0.75rem, 3.2vw, 0.95rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--light-pink);
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
+.final-signature.visible { opacity: 0.85; }
+
+.final-symbol {
+  font-size: clamp(2.6rem, 12vw, 4.6rem);
+  color: var(--bright-pink);
+  text-shadow: 0 0 34px rgba(232, 62, 140, 0.7);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 1.4s ease, transform 1.4s ease;
+}
+.final-symbol.visible { opacity: 1; transform: scale(1); }
+
+.final-actions {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.final-actions.visible { opacity: 1; }
+
+/* ============================================================
+   HUD (skip + music)
+   ============================================================ */
+
+.hud {
+  position: fixed;
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  z-index: 40;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.hud-btn {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  padding: 0.6rem 1.1rem;
+  min-height: 42px;
+  border-radius: 999px;
+  cursor: pointer;
+  background: rgba(8, 5, 10, 0.55);
+  border: 1px solid rgba(255, 143, 196, 0.30);
+  color: rgba(255, 209, 229, 0.75);
+  backdrop-filter: blur(6px);
+  transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.hud-btn:hover, .hud-btn:focus-visible {
+  border-color: var(--light-pink);
+  color: var(--text);
+  outline: none;
+}
+.hud-btn.playing {
+  border-color: var(--bright-pink);
+  color: var(--soft-pink);
+  box-shadow: 0 0 18px rgba(232, 62, 140, 0.35);
+}
+
+/* ============================================================
+   "SEE HOW IT WAS MADE" PANEL
+   ============================================================ */
+
+.math-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(8, 5, 10, 0.94);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 20px auto;
-  position: relative;
+  padding: 4vh 6vw;
+  pointer-events: auto;
 }
 
-#flower-svg {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 0 20px rgba(232, 115, 158, 0.15));
+.math-panel-scroll {
+  max-height: 84vh;
+  overflow-y: auto;
+  width: min(92vw, 660px);
+  -webkit-overflow-scrolling: touch;
 }
 
-/* SVG petal paths */
-.petal-path {
-  opacity: 0;
-  transition: opacity 0.4s ease;
+.math-panel-close {
+  position: absolute;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 143, 196, 0.35);
+  background: transparent;
+  color: var(--soft-pink);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
+.math-panel-close:hover { border-color: var(--light-pink); color: var(--text); }
 
-.petal-path.visible {
-  opacity: 1;
-}
-
-.vein-path {
-  opacity: 0;
-  transition: opacity 0.8s ease;
-}
-
-.vein-path.visible {
-  opacity: 1;
-}
-
-.center-element {
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.center-element.visible {
-  opacity: 1;
-}
-
-.filament-path {
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.filament-path.visible {
-  opacity: 1;
-}
-
-.anther-element {
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.anther-element.visible {
-  opacity: 1;
-}
-
-/* ---- Romantic Message ---- */
-.romantic-message {
+.math-title {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--light-pink);
+  margin-bottom: 1.6rem;
   text-align: center;
-  margin: 30px auto;
-  max-width: 500px;
-  padding: 0 20px;
 }
 
-.romantic-message.hidden {
-  display: none;
+.math-block { margin-bottom: 1.7rem; }
+.math-block-label {
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--rose);
+  margin-bottom: 0.55rem;
 }
-
-.message-line {
-  font-size: clamp(14px, 2.5vw, 20px);
-  color: var(--text-secondary);
-  line-height: 1.9;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-  font-style: italic;
-}
-
-.message-line.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.message-line.delay-1 { transition-delay: 0.4s; }
-.message-line.delay-2 { transition-delay: 0.8s; }
-.message-line.delay-3 { transition-delay: 1.2s; }
-.message-line.delay-4 { transition-delay: 1.6s; }
-.message-line.delay-5 { transition-delay: 2.2s; }
-.message-line.delay-6 { transition-delay: 2.6s; }
-.message-line.delay-7 { transition-delay: 3.0s; }
-
-/* ---- Equations Panel ---- */
-.equations-panel {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: 12px;
-  padding: 28px 32px;
-  margin: 30px auto;
-  max-width: 650px;
-  width: 90%;
-  backdrop-filter: blur(10px);
-}
-
-.equations-panel.hidden {
-  display: none;
-}
-
-.equations-panel h2 {
-  font-size: clamp(16px, 2.5vw, 22px);
-  color: var(--accent-soft);
-  margin-bottom: 18px;
-  text-align: center;
-  font-weight: normal;
-  letter-spacing: 1px;
-}
-
-.equation-block {
-  margin-bottom: 14px;
-  padding: 10px 14px;
-  border-left: 2px solid var(--accent-pink);
-  background: rgba(232, 115, 158, 0.04);
+.math-block-eq {
+  font-family: var(--font-ui);
+  font-size: clamp(0.82rem, 3.5vw, 1rem);
+  line-height: 1.8;
+  color: var(--soft-pink);
+  white-space: pre-wrap;
+  background: rgba(143, 40, 88, 0.14);
+  border-left: 2px solid rgba(214, 51, 132, 0.5);
+  padding: 0.75rem 0.95rem;
   border-radius: 0 6px 6px 0;
 }
 
-.equation-label {
-  font-size: 11px;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin-bottom: 4px;
-}
-
-.equation-text {
-  font-family: 'Courier New', monospace;
-  font-size: clamp(12px, 2vw, 15px);
-  color: var(--text-primary);
-  line-height: 1.6;
-  white-space: pre-wrap;
-}
-
-/* ---- Explore Button ---- */
-.explore-btn-wrap {
-  margin: 20px auto;
+.math-closing {
+  font-size: clamp(1rem, 4.2vw, 1.3rem);
+  line-height: 1.8;
+  font-style: italic;
+  color: var(--text);
   text-align: center;
+  margin-top: 2rem;
 }
 
-.explore-btn-wrap.hidden {
-  display: none;
+/* Heart pulse (once, on completion) */
+#layer-heart {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transition: transform 1.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+/* During the proposal the heart lifts above the question */
+#layer-heart.lifted {
+  transform: translateY(-15%) scale(0.94);
+}
+/* On YES it opens a little wider */
+#layer-heart.lifted.expanded {
+  transform: translateY(-17%) scale(1.06);
+}
+#layer-heart.pulsing {
+  animation: heart-pulse 1.7s ease-in-out 1;
+}
+@keyframes heart-pulse {
+  0%   { transform: scale(1); }
+  22%  { transform: scale(1.055); }
+  46%  { transform: scale(0.985); }
+  70%  { transform: scale(1.02); }
+  100% { transform: scale(1); }
 }
 
-.explore-btn {
-  background: transparent;
-  border: 1px solid var(--accent-pink);
-  color: var(--accent-soft);
-  padding: 10px 28px;
-  font-family: 'Georgia', serif;
-  font-size: 14px;
-  border-radius: 24px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  letter-spacing: 0.5px;
+/* Heart glow keeps breathing while the poetry passes */
+#layer-heart.breathing {
+  animation: heart-breathe 4.6s ease-in-out infinite;
+}
+@keyframes heart-breathe {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(232, 62, 140, 0.45)); }
+  50%      { filter: drop-shadow(0 0 16px rgba(232, 62, 140, 0.75)); }
 }
 
-.explore-btn:hover {
-  background: rgba(232, 115, 158, 0.12);
-  box-shadow: 0 0 20px var(--glow-pink);
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (min-width: 768px) {
+  .proposal-buttons { flex-direction: row; }
+  .text-layer { top: 46%; }
+  .param-display { bottom: 12%; }
 }
 
-/* ---- Controls Panel ---- */
-.controls-panel {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: 12px;
-  padding: 28px 32px;
-  margin: 20px auto;
-  max-width: 500px;
-  width: 90%;
-  backdrop-filter: blur(10px);
+@media (max-height: 480px) {
+  .equation-layer { top: 6%; }
+  .param-display { bottom: 8%; }
 }
 
-.controls-panel.hidden {
-  display: none;
-}
-
-.controls-panel h2 {
-  font-size: clamp(15px, 2.5vw, 20px);
-  color: var(--accent-soft);
-  margin-bottom: 20px;
-  text-align: center;
-  font-weight: normal;
-  letter-spacing: 1px;
-}
-
-.control-group {
-  margin-bottom: 16px;
-}
-
-.control-group label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
-}
-
-.control-group label span {
-  color: var(--accent-soft);
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
-}
-
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 4px;
-  background: rgba(200, 160, 200, 0.15);
-  border-radius: 2px;
-  outline: none;
-  cursor: pointer;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--accent-pink);
-  border: 2px solid var(--bg-dark);
-  box-shadow: 0 0 8px var(--glow-pink);
-  cursor: pointer;
-}
-
-input[type="range"]::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--accent-pink);
-  border: 2px solid var(--bg-dark);
-  box-shadow: 0 0 8px var(--glow-pink);
-  cursor: pointer;
-}
-
-.reset-btn {
-  display: block;
-  margin: 18px auto 0;
-  background: transparent;
-  border: 1px solid var(--text-dim);
-  color: var(--text-dim);
-  padding: 8px 22px;
-  font-family: 'Georgia', serif;
-  font-size: 12px;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.reset-btn:hover {
-  border-color: var(--text-secondary);
-  color: var(--text-secondary);
-}
-
-/* ---- Footer ---- */
-.footer {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--text-dim);
-  font-size: 12px;
-  letter-spacing: 1px;
-}
-
-.footer.hidden {
-  display: none;
-}
-
-/* ---- Responsive ---- */
-@media (max-width: 600px) {
-  .main-content {
-    padding: 10px;
-  }
-
-  .flower-stage {
-    width: 90vw;
-    height: 90vw;
-    margin: 10px auto;
-  }
-
-  .equations-panel,
-  .controls-panel {
-    padding: 18px 16px;
-    width: 95%;
-  }
-
-  .equation-block {
-    padding: 8px 10px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .flower-stage {
-    width: 550px;
-    height: 550px;
+@media (prefers-reduced-motion: reduce) {
+  .scene-line, .poem-line, .eq-line, .final-block,
+  .proposal-question, .think-line {
+    transition-duration: 0.4s !important;
   }
 }

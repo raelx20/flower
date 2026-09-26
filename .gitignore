@@ -1,0 +1,11 @@
+# Optional local audio — drop music.mp3 next to index.html to enable the music button
+music.mp3
+
+# OS junk
+Thumbs.db
+.DS_Store
+
+# Editor / tooling
+.vscode/
+.idea/
+node_modules/
