@@ -2129,8 +2129,18 @@ function setupHud() {
   });
 }
 
+// Reduced motion: the CSS already shortens transitions; the JS clock
+// follows suit so the whole story stays brisk instead of feeling broken.
+function applyMotionPreference() {
+  if (!window.matchMedia) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    ANIMATION.timeScale = 0.35;
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   cacheDom();
+  applyMotionPreference();
   MUSIC.init();
   setupHud();
   SCENES.register('first-point', sceneFirstPoint);
