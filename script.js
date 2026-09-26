@@ -157,11 +157,11 @@ const CONFIG = {
     ]
   },
 
-  // --- Music (drop music.mp3 next to index.html) ---
+  // --- Music (music.mp3 sits next to index.html) ---
   music: {
     src: 'music.mp3',
     playLabel: 'Play music ♫',
-    pauseLabel: 'Pause music ♫'
+    pauseLabel: 'Mute music ♫'
   },
 
   // --- Timing (ms) ---
@@ -449,6 +449,9 @@ const SCENES = {
 const MUSIC = {
   audio: null,
   available: true,
+  playing: false,        // our own state — survives fade transitions
+  targetVolume: 0.55,
+  fadeRaf: null,
 
   init() {
     const btn = DOM['btn-music'];
@@ -457,41 +460,73 @@ const MUSIC = {
     // button gracefully, before anyone ever clicks it.
     MUSIC.audio = new Audio(CONFIG.music.src);
     MUSIC.audio.loop = true;
-    MUSIC.audio.volume = 0.55;
+    MUSIC.audio.volume = 0;
     MUSIC.audio.addEventListener('error', () => {
       MUSIC.available = false;
       btn.classList.add('hidden');
     });
     MUSIC.audio.load();
     btn.textContent = CONFIG.music.playLabel;
+    btn.setAttribute('aria-pressed', 'false');
     btn.classList.remove('hidden');
     btn.addEventListener('click', MUSIC.toggle);
   },
 
+  // rAF volume ramp — cancellable, so rapid toggling never strands it.
+  fadeTo(target, ms, done) {
+    const audio = MUSIC.audio;
+    if (!audio) { if (done) done(); return; }
+    if (MUSIC.fadeRaf) cancelAnimationFrame(MUSIC.fadeRaf);
+    const from = audio.volume;
+    const start = performance.now();
+    const step = now => {
+      const t = MATH.clamp((now - start) / Math.max(1, ms), 0, 1);
+      audio.volume = from + (target - from) * t;
+      if (t < 1) {
+        MUSIC.fadeRaf = requestAnimationFrame(step);
+      } else {
+        MUSIC.fadeRaf = null;
+        if (done) done();
+      }
+    };
+    MUSIC.fadeRaf = requestAnimationFrame(step);
+  },
+
+  // One button, two jobs: start the music, or mute it (and back).
   toggle() {
     if (!MUSIC.available || !MUSIC.audio) return;
     const btn = DOM['btn-music'];
-    if (MUSIC.audio.paused) {
+    if (!MUSIC.playing) {
+      MUSIC.playing = true;
       const p = MUSIC.audio.play();
       if (p && p.catch) p.catch(() => {});
       btn.textContent = CONFIG.music.pauseLabel;
       btn.classList.add('playing');
+      btn.setAttribute('aria-pressed', 'true');
+      MUSIC.fadeTo(MUSIC.targetVolume, 900);   // gentle fade-in
     } else {
-      MUSIC.audio.pause();
+      MUSIC.playing = false;
       btn.textContent = CONFIG.music.playLabel;
       btn.classList.remove('playing');
+      btn.setAttribute('aria-pressed', 'false');
+      // fade out, then pause — unless it was re-enabled mid-fade
+      MUSIC.fadeTo(0, 500, () => {
+        if (!MUSIC.playing) MUSIC.audio.pause();
+      });
     }
   },
 
+  // Soft full stop (available to the story if ever needed).
   fadeOut() {
     if (!MUSIC.audio) return;
-    const audio = MUSIC.audio;
-    const step = () => {
-      audio.volume = Math.max(0, audio.volume - 0.05);
-      if (audio.volume > 0.01) setTimeout(step, 120);
-      else audio.pause();
-    };
-    step();
+    MUSIC.playing = false;
+    const btn = DOM['btn-music'];
+    if (btn) {
+      btn.textContent = CONFIG.music.playLabel;
+      btn.classList.remove('playing');
+      btn.setAttribute('aria-pressed', 'false');
+    }
+    MUSIC.fadeTo(0, 600, () => { if (!MUSIC.playing) MUSIC.audio.pause(); });
   }
 };
 
