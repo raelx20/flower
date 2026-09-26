@@ -129,9 +129,9 @@ body.lighter {
   transform: translateY(14px);
   filter: blur(6px);
   transition:
-    opacity 1.1s ease,
-    transform 1.1s ease,
-    filter 1.1s ease;
+    opacity 1.5s ease,
+    transform 1.5s ease,
+    filter 1.5s ease;
 }
 .scene-line.visible {
   opacity: 1;
@@ -185,7 +185,7 @@ body.lighter {
   opacity: 0;
   transform: translateY(8px);
   filter: blur(4px);
-  transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease;
+  transition: opacity 1.1s ease, transform 1.1s ease, filter 1.1s ease;
 }
 .eq-line.visible { opacity: 0.92; transform: translateY(0); filter: blur(0); }
 .eq-line.gone {
@@ -241,7 +241,7 @@ body.lighter {
   opacity: 0;
   transform: translateY(16px);
   filter: blur(7px);
-  transition: opacity 1.3s ease, transform 1.3s ease, filter 1.3s ease;
+  transition: opacity 1.7s ease, transform 1.7s ease, filter 1.7s ease;
 }
 .poem-line.visible { opacity: 1; transform: translateY(0); filter: blur(0); }
 .poem-line.gone {

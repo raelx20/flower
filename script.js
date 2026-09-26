@@ -166,6 +166,10 @@ const CONFIG = {
 
   // --- Timing (ms) ---
   timing: {
+    // Global text pacing: every hold/gap in the story is multiplied
+    // by this. 1 = original speed. Raise = slower & more spacious,
+    // lower = brisker. Text fade-in length lives in style.css.
+    pacing: 1.4,
     lineReveal: 1100,
     lineHold: 1900,
     stanzaPause: 1200,
@@ -299,7 +303,7 @@ const ANIMATION = {
   // so a skip never waits out a long poetic hold.
   sleep(ms) {
     if (SCENES.skipRequested) return Promise.resolve();
-    const dur = Math.max(0, ms * ANIMATION.timeScale);
+    const dur = Math.max(0, ms * ANIMATION.timeScale * CONFIG.timing.pacing);
     return new Promise(resolve => {
       const start = performance.now();
       const tick = () => {
