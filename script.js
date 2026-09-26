@@ -169,7 +169,7 @@ const CONFIG = {
     // Global text pacing: every hold/gap in the story is multiplied
     // by this. 1 = original speed. Raise = slower & more spacious,
     // lower = brisker. Text fade-in length lives in style.css.
-    pacing: 1.4,
+    pacing: 1.6,
     lineReveal: 1100,
     lineHold: 1900,
     stanzaPause: 1200,
@@ -337,7 +337,7 @@ const ANIMATION = {
     return new Promise(resolve => {
       if (!line) { resolve(); return; }
       line.classList.add('gone');
-      const delay = SCENES.skipRequested ? 150 : 1000;
+      const delay = SCENES.skipRequested ? 150 : 1750;
       setTimeout(() => {
         if (line.parentNode) line.parentNode.removeChild(line);
         resolve();
@@ -1881,7 +1881,7 @@ async function sceneFlowerBuild() {
     if (i < captions.length && !SCENES.skipRequested) {
       textLayer.classList.add('lower');
       const cap = await POETRY.line(captions[i], 'scene-line dim');
-      await ANIMATION.sleep(750);
+      await ANIMATION.sleep(1600);
       await ANIMATION.hideLine(cap);
       textLayer.classList.remove('lower');
     }
@@ -1945,7 +1945,7 @@ async function sceneHeart() {
   await ANIMATION.sleep(1100);
 
   const travel = await POETRY.line('Then let t travel.', 'scene-line dim');
-  await ANIMATION.sleep(1500);
+  await ANIMATION.sleep(1800);
   await ANIMATION.hideLine(travel);
   if (SCENES.skipRequested) return;
   await EQUATIONS.fade();
